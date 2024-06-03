@@ -59,6 +59,13 @@ defmodule ClaysWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{ClaysWeb.UserAuth, :ensure_authenticated}] do
+      live "/skeet", RoundLive.Index, :index
+      live "/skeet/new", RoundLive.Index, :new
+      live "/skeet/:id/edit", RoundLive.Index, :edit
+
+      live "/skeet/:id", RoundLive.Show, :show
+      live "/skeet/:id/show/edit", RoundLive.Show, :edit
+
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
     end

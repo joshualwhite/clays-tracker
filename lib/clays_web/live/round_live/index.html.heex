@@ -1,0 +1,47 @@
+<.header>
+  Listing Skeet rounds
+  <:actions>
+    <.link patch={~p"/skeet/new"}>
+      <.button>New Round</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="skeet"
+  rows={@streams.skeet}
+  row_click={fn {_id, round} -> JS.navigate(~p"/skeet/#{round}") end}
+>
+  <:col :let={{_id, round}} label="User"><%= round.user_id %></:col>
+  <:col :let={{_id, round}} label="Score"><%= round.score %></:col>
+  <:col :let={{_id, round}} label="Total"><%= round.total %></:col>
+  <:col :let={{_id, round}} label="Misses"><%= round.misses %></:col>
+  <:col :let={{_id, round}} label="Option"><%= round.option %></:col>
+  <:col :let={{_id, round}} label="Created at"><%= round.created_at %></:col>
+  <:action :let={{_id, round}}>
+    <div class="sr-only">
+      <.link navigate={~p"/skeet/#{round}"}>Show</.link>
+    </div>
+    <.link patch={~p"/skeet/#{round}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, round}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: round.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="round-modal" show on_cancel={JS.patch(~p"/skeet")}>
+  <.live_component
+    module={ClaysWeb.RoundLive.FormComponent}
+    id={@round.id || :new}
+    title={@page_title}
+    action={@live_action}
+    round={@round}
+    current_user={@current_user}
+    patch={~p"/skeet"}
+  />
+</.modal>
